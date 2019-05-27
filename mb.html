@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Exemple Pixel IO</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="https://mb.pixel.swello.com/lib/pixelio.min.js"></script>
+  <style>
+    .pixelClass {
+      border: 2px solid #f00;
+      width: 1200px;
+      height: 800px;
+      position: absolute
+    }
+
+    .subPixel {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="file" id="file" style="display:none;" />
+  <div>
+    <img id="preview" width="100" height="100" crossorigin="anonymous" />
+  </div>
+  <button id="buttonIframe">Open Iframe</button>
+  <button id="closeButtonIframe">close Iframe</button>
+  <div class="myContainer"></div>
+  <script>
+    // DOM element
+    const formfile = document.querySelector('#file')
+    const button = document.querySelector('#buttonIframe')
+    const closeButton = document.querySelector('#closeButtonIframe')
+    const preview = document.querySelector('#preview')
+    // img variable
+    let img = null
+    // PIXEL IO  config variable
+    const userToken = 'reyuqfgyqgfyrquyfguyqregfyu'
+    const defaultSize = {
+      width: 1260,
+      height: 708,
+      restrict: true,
+    }
+    const iframeCSS = 'pixelClass'
+
+    // PIXEL IO
+    const pio = new PixelIO(userToken, defaultSize, iframeCSS)
+    pio.canSaveLocal = true
+    pio.on('export', base64 => {
+      preview.src = base64
+      pio.close()
+    })
+
+    // DOM LISTENER
+    button.addEventListener('click', () =>
+      pio.open(img, {
+        type: 'iframe',
+      })
+    )
+    closeButton.addEventListener('click', () => pio.close())
+    preview.addEventListener('click', () => formfile.click())
+    formfile.addEventListener('change', evt => {
+      img = evt.target.files[0]
+      const reader = new FileReader()
+      reader.addEventListener('load', () => (preview.src = reader.result))
+      reader.readAsDataURL(img)
+    })
+  </script>
+</body>
+
+</html>
